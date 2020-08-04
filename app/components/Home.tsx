@@ -7,7 +7,14 @@ export default function Home(): JSX.Element {
   return (
     <div className={styles.container} data-tid="container">
       <h2>Home</h2>
-      <Link to={routes.COUNTER}>to Counter</Link>
+      <ul>
+        <li>
+          <Link to={routes.DATA_EXPLORER}>to Data Explorer</Link>
+        </li>
+        <li>
+          <Link to={routes.COUNTER}>to Counter</Link>
+        </li>
+      </ul>
     </div>
   );
 }

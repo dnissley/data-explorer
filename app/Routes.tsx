@@ -10,9 +10,21 @@ const LazyCounterPage = React.lazy(() =>
   import(/* webpackChunkName: "CounterPage" */ './containers/CounterPage')
 );
 
-const CounterPage = (props: Record<string, any>) => (
+const LazyDataExplorerPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: "DataExplorerPage" */ './containers/DataExplorerPage'
+  )
+);
+
+const CounterPage = (props: Record<string, unknown>) => (
   <React.Suspense fallback={<h1>Loading...</h1>}>
     <LazyCounterPage {...props} />
+  </React.Suspense>
+);
+
+const DataExplorerPage = (props: Record<string, unknown>) => (
+  <React.Suspense fallback={<h1>Loading...</h1>}>
+    <LazyDataExplorerPage {...props} />
   </React.Suspense>
 );
 
@@ -21,6 +33,7 @@ export default function Routes() {
     <App>
       <Switch>
         <Route path={routes.COUNTER} component={CounterPage} />
+        <Route path={routes.DATA_EXPLORER} component={DataExplorerPage} />
         <Route path={routes.HOME} component={HomePage} />
       </Switch>
     </App>

@@ -8,6 +8,7 @@
  * When running `yarn build` or `yarn build-main`, this file is compiled to
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
+import { config as loadDotEnvVariables } from 'dotenv';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
@@ -15,6 +16,8 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+
+loadDotEnvVariables();
 
 export default class AppUpdater {
   constructor() {
