@@ -26,15 +26,19 @@ interface InvalidateEntity extends Action<string> {
   };
 }
 
-interface TrackedEntity extends EntityDefinition {
+export interface TrackedEntity extends EntityDefinition {
   loading: boolean;
   error?: string;
   data?: ColumnValuePairs | ColumnValuePairs[];
 }
 
+export interface TrackedEntities {
+  [entityName: string]: TrackedEntity;
+}
+
 type DataExplorerState = {
   value: number;
-  entities: { [entityName: string]: TrackedEntity };
+  entities: TrackedEntities;
 };
 
 const dataExplorerSlice = createSlice({
