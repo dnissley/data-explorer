@@ -13,14 +13,30 @@ import {
   selectCount,
   addEntity,
   selectEntities,
-  TrackedEntity,
-  TrackedEntities,
 } from './dataExplorerSlice';
+import { TrackedEntities } from './entity';
+import Entity from '../../components/Entity';
 
 const GridItem = styled.div`
   border: 1px solid black;
   margin: 3px;
   padding: 3px;
+  overflow: auto;
+  font-family: Monaco;
+  font-size: 70%;
+
+  ::-webkit-scrollbar {
+    width: 0px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(241, 241, 241, 1);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(136, 136, 136);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(85, 85, 85);
+  }
 `;
 
 const Button = styled.button`
@@ -193,6 +209,7 @@ export default function DataExplorer() {
   useEffect(() => {
     dispatch(
       addEntity({
+        sourceType: 'mysql',
         name: 'Dylan Nissley',
         table: 'users',
         where: { username: 'dylan.nissley@bluecrewjobs.com' },
@@ -200,6 +217,7 @@ export default function DataExplorer() {
     );
     dispatch(
       addEntity({
+        sourceType: 'mysql',
         name: 'Troy Leach',
         table: 'users',
         where: { username: 'troy@bluecrewjobs.com' },
@@ -216,7 +234,7 @@ export default function DataExplorer() {
       </GridItem>
       {Object.keys(entities).map((e) => (
         <GridItem key={`entity_${e}`}>
-          {e} ::: {JSON.stringify(entities[e])}
+          <Entity entity={entities[e]} />
         </GridItem>
       ))}
       <GridItem key="counter" className="counter">

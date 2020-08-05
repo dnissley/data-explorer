@@ -6,6 +6,7 @@ import {
   ColumnValuePairs,
   EntityDefinition,
   generateSelectQuery,
+  TrackedEntities,
 } from './entity';
 
 interface DeclareEntity extends Action<string> {
@@ -24,16 +25,6 @@ interface InvalidateEntity extends Action<string> {
     name: string;
     error: Error;
   };
-}
-
-export interface TrackedEntity extends EntityDefinition {
-  loading: boolean;
-  error?: string;
-  data?: ColumnValuePairs | ColumnValuePairs[];
-}
-
-export interface TrackedEntities {
-  [entityName: string]: TrackedEntity;
 }
 
 type DataExplorerState = {
@@ -57,8 +48,7 @@ const dataExplorerSlice = createSlice({
       entity.error = undefined;
       switch (action.payload.data.length) {
         case 0:
-          entity.error = 'No data found';
-          entity.data = [];
+          entity.error = { name: 'Data Error', message: 'No data found' };
           break;
         case 1:
           [entity.data] = action.payload.data;
