@@ -1,9 +1,32 @@
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
-import { TrackedEntity } from '../features/dataExplorer/entity';
+import ReactDataSheet from 'react-datasheet';
+import {
+  TrackedEntity,
+  ColumnValuePairs,
+} from '../features/dataExplorer/entity';
+import { DbTypes } from '../dataSources/mysql';
+
+interface Cell extends ReactDataSheet.Cell<Cell> {
+  value: DbTypes;
+}
+
+class TypedDataSheet extends ReactDataSheet<Cell> {}
 
 type EntityPropTypes = {
   entity: TrackedEntity;
+};
+
+const formatGridData = (data: ColumnValuePairs): Cell[][] => {
+  return Object.keys(data).map((columnName) => {
+    return [{ value: columnName }, { value: data[columnName] }];
+  });
+};
+
+const valueRenderer = (cell: Cell) => {
+  if (typeof cell.value === 'boolean') {
+    return String(cell.value);
+  }
+  return cell.value;
 };
 
 const Entity: React.FunctionComponent<EntityPropTypes> = ({ entity }) => {
@@ -12,42 +35,7 @@ const Entity: React.FunctionComponent<EntityPropTypes> = ({ entity }) => {
   }
   const data = entity.data || {};
   const mainContent = (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Column</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.keys(data)
-            .sort()
-            .map((columnName) => {
-              return (
-                <tr key={columnName}>
-                  <td data-tip data-for={`entity_${entity.name}_${columnName}`}>
-                    <div>
-                      {columnName.length > 10
-                        ? `${columnName.substr(0, 9)}…`
-                        : columnName}
-                    </div>
-                    {columnName.length > 10 ? (
-                      <ReactTooltip
-                        id={`entity_${entity.name}_${columnName}`}
-                        effect="solid"
-                      >
-                        <span>{columnName}</span>
-                      </ReactTooltip>
-                    ) : null}
-                  </td>
-                  <td>{data[columnName]}</td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </table>
-    </div>
+    <TypedDataSheet data={formatGridData(data)} valueRenderer={valueRenderer} />
   );
   if (entity.error) {
     return (

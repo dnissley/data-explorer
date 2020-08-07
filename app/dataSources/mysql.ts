@@ -15,7 +15,7 @@ type MySQLConnectionConfiguration = {
   connectionLimit: number;
 };
 
-type DbTypes = string | number | boolean | null;
+export type DbTypes = string | number | boolean | null;
 type DbRecord = { [columnName: string]: DbTypes };
 
 type QueryResult = {

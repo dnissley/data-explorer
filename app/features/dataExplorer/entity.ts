@@ -8,7 +8,7 @@ export type EntityDefinition = {
 };
 
 export type ColumnValuePairs = {
-  [columnName: string]: string[] | number[] | string | number | boolean | null; // maybe also Date?? moment?? what about nested parenthetical conditions?
+  [columnName: string]: string | number | boolean | null; // maybe also Date?? moment?? what about nested parenthetical conditions?
 };
 
 export interface TrackedEntity extends EntityDefinition {
