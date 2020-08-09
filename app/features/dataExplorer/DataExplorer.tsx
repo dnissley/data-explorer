@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ReactChild, ReactChildren } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -16,29 +16,6 @@ import {
 } from './dataExplorerSlice';
 import { TrackedEntities } from './entity';
 import Entity from '../../components/Entity';
-
-// const GridItem = styled.div`
-//   border: 1px solid black;
-//   margin: 3px;
-//   padding: 3px;
-//   overflow: auto;
-//   //font-family: Monaco;
-//   font-size: 50%;
-//   line-height: 50%;
-
-//   ::-webkit-scrollbar {
-//     width: 0px;
-//   }
-//   ::-webkit-scrollbar-track {
-//     background: rgba(241, 241, 241, 1);
-//   }
-//   ::-webkit-scrollbar-thumb {
-//     background: rgb(136, 136, 136);
-//   }
-//   ::-webkit-scrollbar-thumb:hover {
-//     background: rgb(85, 85, 85);
-//   }
-// `;
 
 const Button = styled.button`
   background: transparent;
@@ -77,6 +54,30 @@ const DragHandle = () => (
   </div>
 );
 
+interface WindowFrameProps {
+  title: string;
+  [otherProp: string]: unknown;
+}
+
+const WindowFrame: React.FC<WindowFrameProps> = ({
+  children,
+  ...otherProps
+}) => {
+  return (
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <div {...otherProps}>
+      <DragHandle />
+      <div
+        className="dragHandle"
+        style={{ height: 18, backgroundColor: 'red' }}
+      >
+        Window Title Bar
+      </div>
+      <div>{children}</div>
+    </div>
+  );
+};
+
 export default function DataExplorer() {
   const dispatch = useDispatch();
   const value = useSelector(selectCount);
@@ -111,16 +112,17 @@ export default function DataExplorer() {
       width={800}
       draggableHandle=".dragHandle"
     >
-      <div key="backButton" className="backButton">
+      <WindowFrame title="test" key="backButton" className="backButton">
         <DragHandle />
         <Link to={routes.HOME}>&lt;-</Link>
-      </div>
+      </WindowFrame>
       {Object.keys(entities).map((e) => (
         <div key={`entity_${e}`}>
           <Entity entity={entities[e]} />
         </div>
       ))}
       <div key="counter" className="counter">
+        <DragHandle />
         {value}
       </div>
       <div key="counterButtons" className="btnGroup">

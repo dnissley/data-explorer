@@ -42,13 +42,16 @@ if (
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
+  const {
+    default: installExtension,
+    REACT_DEVELOPER_TOOLS,
+    REDUX_DEVTOOLS,
+  } = require('electron-devtools-installer');
+  const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
 
-  return Promise.all(
-    extensions.map((name) => installer.default(installer[name], forceDownload))
-  ).catch(console.log);
+  return Promise.all(extensions.map((name) => installExtension(name))).catch(
+    console.log
+  );
 };
 
 const createWindow = async () => {
