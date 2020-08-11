@@ -27,14 +27,25 @@ interface InvalidateEntity extends Action<string> {
   };
 }
 
+interface RemoveEntity extends Action<string> {
+  payload: {
+    name: string;
+  };
+}
+
 type DataExplorerState = {
   value: number;
   entities: TrackedEntities;
+  addEntityModal: boolean;
 };
 
 const dataExplorerSlice = createSlice({
   name: 'dataExplorer',
-  initialState: { value: 0, entities: {} } as DataExplorerState,
+  initialState: {
+    value: 0,
+    entities: {},
+    addEntityModal: false,
+  } as DataExplorerState,
   reducers: {
     declareEntity: (state, action: DeclareEntity) => {
       state.entities[action.payload.name] = {
@@ -60,7 +71,10 @@ const dataExplorerSlice = createSlice({
     invalidateEntity: (state, action: InvalidateEntity) => {
       const entity = state.entities[action.payload.name];
       entity.loading = false;
-      entity.error = action.payload.error.message;
+      entity.error = action.payload.error;
+    },
+    removeEntity: (state, action: RemoveEntity) => {
+      delete state.entities[action.payload.name];
     },
     increment: (state) => {
       state.value += 1;
@@ -71,7 +85,7 @@ const dataExplorerSlice = createSlice({
   },
 });
 
-export const { increment, decrement } = dataExplorerSlice.actions;
+export const { increment, decrement, removeEntity } = dataExplorerSlice.actions;
 
 export const incrementIfOdd = (): AppThunk => {
   return (dispatch, getState) => {

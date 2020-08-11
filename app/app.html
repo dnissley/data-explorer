@@ -20,6 +20,7 @@
   </head>
   <body>
     <div id="root"></div>
+    <div id="modal"></div>
     <script>
       if (typeof process === 'object') {
         const scripts = [];
@@ -40,7 +41,7 @@
         if (scripts.length) {
           document.write(
             scripts
-              .map(script => `<script defer src="${script}"><\/script>`)
+              .map((script) => `<script defer src="${script}"><\/script>`)
               .join('')
           );
         }
