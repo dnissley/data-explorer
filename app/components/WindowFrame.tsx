@@ -22,7 +22,6 @@ const frameContainerStyle = {
 };
 
 const titleBarStyle = {
-  height: 18,
   backgroundColor: '#ccc',
   borderBottom: '1px solid black',
 };
@@ -53,7 +52,7 @@ const WindowFrame: React.FC<WindowFrameProps> = ({
     // eslint-disable-next-line react/jsx-props-no-spreading
     <div {...insertContainerStyles(otherProps)}>
       <div className="dragHandle" style={titleBarStyle}>
-        {title}
+        <span style={{ marginLeft: '0.1em' }}>{title}</span>
         {controls.map((control) => {
           return (
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions

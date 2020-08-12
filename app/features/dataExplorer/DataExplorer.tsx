@@ -19,6 +19,7 @@ import { TrackedEntities } from './entity';
 import Entity from '../../components/Entity';
 import WindowFrame from '../../components/WindowFrame';
 import Modal from '../../components/Modal';
+import AddEntityModal from '../../components/AddEntityModal';
 
 const Button = styled.button`
   background: transparent;
@@ -81,11 +82,10 @@ export default function DataExplorer() {
 
   return (
     <div>
-      <Modal
+      <AddEntityModal
         show={showAddEntityModal}
-        onClose={() => {
-          setShowAddEntityModal(false);
-        }}
+        onClose={() => setShowAddEntityModal(false)}
+        onSubmit={(entity) => dispatch(addEntity(entity))}
       />
       <GridLayout
         layout={layout}
