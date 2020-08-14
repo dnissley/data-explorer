@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-one-expression-per-line */
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -6,19 +5,13 @@ import styled from 'styled-components';
 import GridLayout from 'react-grid-layout';
 import routes from '../../constants/routes.json';
 import {
-  increment,
-  decrement,
-  incrementIfOdd,
-  incrementAsync,
-  selectCount,
   addEntity,
   removeEntity,
+  reloadAllEntities,
   selectEntities,
 } from './dataExplorerSlice';
-import { TrackedEntities } from './entity';
 import Entity from '../../components/Entity';
 import WindowFrame from '../../components/WindowFrame';
-import Modal from '../../components/Modal';
 import AddEntityModal from '../../components/AddEntityModal';
 
 const Button = styled.button`
@@ -30,31 +23,18 @@ const Button = styled.button`
   padding: 0.25em 1em;
 `;
 
-const baseLayout = [
+const baseLayout: GridLayout.Layout[] = [
   { i: 'backButton', x: 0, y: 0, w: 2, h: 2 },
   { i: 'toolPane', x: 0, y: 2, w: 2, h: 4 },
   { i: 'counter', x: 0, y: 6, w: 2, h: 2 },
   { i: 'counterButtons', x: 0, y: 8, w: 2, h: 2 },
 ];
 
-function generateLayout(entities: TrackedEntities): GridLayout.Layout[] {
-  return [
-    ...baseLayout,
-    ...Object.keys(entities).map((entityName, i) => ({
-      i: `entity_${entityName}`,
-      x: 2,
-      y: i * 2,
-      w: 6,
-      h: 4,
-    })),
-  ];
-}
-
 export default function DataExplorer() {
   const dispatch = useDispatch();
-  const value = useSelector(selectCount);
   const entities = useSelector(selectEntities);
-  const [layout, setLayout] = useState(generateLayout(entities));
+  const [entitiesInLayout] = useState(new Set<string>());
+  const [layout, setLayout] = useState(baseLayout);
   const [showAddEntityModal, setShowAddEntityModal] = useState(false);
 
   useEffect(() => {
@@ -77,18 +57,37 @@ export default function DataExplorer() {
   }, [dispatch]);
 
   useEffect(() => {
-    setLayout(generateLayout(entities));
-  }, [entities]);
+    const entitiesToAdd: GridLayout.Layout[] = [];
+    Object.keys(entities).forEach((entityName) => {
+      if (!entitiesInLayout.has(entityName)) {
+        entitiesInLayout.add(entityName);
+        entitiesToAdd.push({
+          i: `entity_${entityName}`,
+          x: 2,
+          y: 0,
+          w: 6,
+          h: 4,
+        });
+      }
+    });
+    if (entitiesToAdd.length > 0) {
+      setLayout([...layout, ...entitiesToAdd]);
+    }
+  }, [entities, entitiesInLayout, layout]);
 
   return (
     <div>
       <AddEntityModal
         show={showAddEntityModal}
         onClose={() => setShowAddEntityModal(false)}
-        onSubmit={(entity) => dispatch(addEntity(entity))}
+        onSubmit={(entity) => {
+          setShowAddEntityModal(false);
+          dispatch(addEntity(entity));
+        }}
       />
       <GridLayout
         layout={layout}
+        onLayoutChange={setLayout}
         cols={12}
         rowHeight={30}
         width={800}
@@ -106,6 +105,9 @@ export default function DataExplorer() {
             }}
           >
             <i className="fa fa-plus fa-3x" />
+          </Button>
+          <Button onClick={() => dispatch(reloadAllEntities())}>
+            <i className="fa fa-sync-alt fa-3x" />
           </Button>
         </WindowFrame>
         {Object.keys(entities).map((entityName) => (
@@ -125,51 +127,6 @@ export default function DataExplorer() {
             <Entity entity={entities[entityName]} />
           </WindowFrame>
         ))}
-        <WindowFrame title="Counter Value" key="counter">
-          {value}
-        </WindowFrame>
-        <WindowFrame
-          title="Counter Controls"
-          key="counterButtons"
-          className="btnGroup"
-        >
-          <Button
-            className="btn"
-            onClick={() => {
-              dispatch(increment());
-            }}
-            type="button"
-          >
-            +
-          </Button>
-          <Button
-            className="btn"
-            onClick={() => {
-              dispatch(decrement());
-            }}
-            type="button"
-          >
-            -
-          </Button>
-          <Button
-            className="btn"
-            onClick={() => {
-              dispatch(incrementIfOdd());
-            }}
-            type="button"
-          >
-            odd
-          </Button>
-          <Button
-            className="btn"
-            onClick={() => {
-              dispatch(incrementAsync());
-            }}
-            type="button"
-          >
-            async
-          </Button>
-        </WindowFrame>
       </GridLayout>
     </div>
   );

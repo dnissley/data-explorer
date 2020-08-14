@@ -27,6 +27,13 @@ const AddEntityModal: React.FC<AddEntityModalProps> = ({
     },
   });
 
+  const clearInput = () => {
+    setEntityName('');
+    setEntityTable('');
+    setEntityWhereColumn('');
+    setEntityWhereValue('');
+  };
+
   return (
     <Modal title="Add Entity" show={show} onClose={onClose}>
       <div>
@@ -72,7 +79,13 @@ const AddEntityModal: React.FC<AddEntityModalProps> = ({
       <button type="button" onClick={onClose}>
         Cancel
       </button>
-      <button type="button" onClick={() => onSubmit(buildEntity())}>
+      <button
+        type="button"
+        onClick={() => {
+          onSubmit(buildEntity());
+          clearInput();
+        }}
+      >
         Add Entity
       </button>
     </Modal>

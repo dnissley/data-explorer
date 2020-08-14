@@ -127,6 +127,29 @@ export const addEntity = (entity: EntityDefinition): AppThunk => {
   };
 };
 
+export const reloadAllEntities = (): AppThunk => async (dispatch, getState) => {
+  const state = getState();
+  Object.keys(state.dataExplorer.entities).forEach(async (entityName) => {
+    const entity = state.dataExplorer.entities[entityName];
+    try {
+      const { records } = await mysql.query(generateSelectQuery(entity));
+      dispatch(
+        dataExplorerSlice.actions.loadEntity({
+          name: entity.name,
+          data: records,
+        })
+      );
+    } catch (e) {
+      dispatch(
+        dataExplorerSlice.actions.invalidateEntity({
+          name: entity.name,
+          error: { name: e.name, message: e.message, stack: e.stack },
+        })
+      );
+    }
+  });
+};
+
 export default dataExplorerSlice.reducer;
 
 export const selectCount = (state: RootState) => state.dataExplorer.value;
